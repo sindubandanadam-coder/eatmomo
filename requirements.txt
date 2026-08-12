@@ -6,3 +6,4 @@ langchain-core
 sse_starlette
 google-generativeai
 langchain-google-genai
+langchain
