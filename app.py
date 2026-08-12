@@ -15,10 +15,41 @@ from langchain_core.runnables import RunnableLambda
 def search_movies(genre: str) -> str:
     """Search for Indian movies by genre."""
     movies = {
-        "sci-fi": "Cargo, 2.0, Mr. India",
-        "comedy": "3 Idiots, Hera Pheri, Munna Bhai M.B.B.S.",
-        "action": "RRR, Vikram, Baahubali"
-    }
+        "sci-fi": (
+            "Cargo, 2.0, Mr. India, Robot, Enthiran, "
+            "24, Kalki 2898 AD, Ra.One, Attack, Tumbbad"
+        ),
+        "comedy": (
+            "3 Idiots, Hera Pheri, Munna Bhai M.B.B.S., "
+            "Welcome, Dhamaal, Bhool Bhulaiyaa, Golmaal, "
+            "Chup Chup Ke, Fukrey, Stree"
+        ),
+        "action": (
+            "RRR, Vikram, Baahubali, KGF, KGF Chapter 2, "
+            "Pushpa, Pushpa 2, Salaar, Jailer, Kaithi, "
+            "War, Pathaan, Gadar 2"
+        ),
+        "drama": (
+            "Taare Zameen Par, Dangal, Swades, "
+            "12th Fail, The Lunchbox, Masaan, "
+            "Udaan, Kapoor & Sons, October"
+        ),
+        "thriller": (
+            "Drishyam, Drishyam 2, Andhadhun, Kahaani, "
+            "Ratsasan, Vikram Vedha, Badla, HIT, "
+            "Forensic, A Wednesday"
+        ),
+        "romance": (
+            "Jab We Met, Veer-Zaara, Rockstar, "
+            "Tamasha, Sita Ramam, OK Jaanu, "
+            "Barfi!, 96, Premam, Love Aaj Kal"
+        ),
+        "horror": (
+            "Tumbbad, Stree, Bhool Bhulaiyaa, "
+            "Bhoot, Pari, Bulbbul, 13B, Raaz, "
+            "Pizza, Aranmanai"
+        )
+        }
     return movies.get(genre.lower(), "No movies found for that genre")
 
 
@@ -60,7 +91,7 @@ tools = [get_weather, search_movies, change__to_f]
 
 # --- 2. Initialize Model & Agent ---
 # Retrieve the key from the OS environment instead of Colab's userdata
-GOOGLE_API_KEY = os.environ.get("GEMINI````_API_KEY")
+GOOGLE_API_KEY = os.environ.get("GEMINI_API_KEY")
 
 llm_flash = ChatGoogleGenerativeAI(
     model="gemma-4-31b-it",
@@ -113,17 +144,16 @@ formatted_agent_chain = (
 ).with_types(input_type=AgentInput, output_type=str)
 
 # --- 3. FastAPI App ---
-##Need To Code
 app = FastAPI(
-    title="Movie & Weather Agent",
+    title="Indian Weather & Cinema Agent",
     version="1.0",
-    description="A Langchain agent (Gemini) with search_movies and get_weather tools,served via Langserve.",
+    description ="A LangChain agent (Gemini) woith search_moives and get_weather tools, served via LangServe.",
 )
-
 @app.get("/")
 def root():
-    return {"message:""Server is running.Visit/agent/playground/to chat,or/docs for the API."}
-    add_routes(app,formatted_agent_chain,path-"/agent")
+  return {"message": "Server is running.Visit /agent/playgroud/ to chat, or /docs for the API."}
+
+add_routes(app, formatted_agent_chain, path="/agent")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
